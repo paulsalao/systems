@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Details</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.82)), url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=85");
+            background-size: cover, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .details-box {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 12px;
+            width: 420px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            text-align: left;
+        }
+
+        h1 {
+            color: #1e293b;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .info {
+            color: #475569;
+            font-size: 18px;
+            margin: 14px 0;
+        }
+
+        .label {
+            color: #1e293b;
+            font-weight: bold;
+        }
+
+        .price-box {
+            margin-top: 18px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 14px 16px;
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .note {
+            margin-top: 10px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+        }
+
+        .secondary:hover {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 16px rgba(15, 23, 42, 0.12);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="details-box">
+        <h1>Unit Details</h1>
+
+        <div class="info"><span class="label">Category:</span> <span id="categoryText">Regular</span></div>
+        <div class="info"><span class="label">Customer:</span> <span id="customerText">Guest</span></div>
+        <div class="info"><span class="label">Unit:</span> <span id="unitText">Unit 101</span></div>
+        <div class="info"><span class="label">Time:</span> <span id="timeText">10:00 AM - 12:00 PM</span></div>
+        <div class="info"><span class="label">Duration:</span> <span id="durationText">120 minutes</span></div>
+
+        <div class="price-box">
+            Price: <span id="priceText">₱120</span>
+        </div>
+        <div class="note">Rate: 1 peso per minute</div>
+
+        <div class="actions">
+            <button class="btn primary" type="button" id="confirmBtn">Book</button>
+            <button class="btn secondary" type="button" id="backBtn">Back</button>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const customer = params.get('customer') || localStorage.getItem('currentUsername') || 'Guest';
+        const category = params.get('category') || 'Regular';
+        const unit = params.get('unit') || 'Unit 101';
+        const startTime = params.get('startTime') || '10:00';
+        const endTime = params.get('endTime') || '12:00';
+        const durationMinutes = Number(params.get('durationMinutes')) || 120;
+        const regularRate = 1;
+        const deluxeRate = 5;
+        const calculatedPrice = category === 'Deluxe' ? durationMinutes * deluxeRate : durationMinutes * regularRate;
+        const price = Number(params.get('price')) || calculatedPrice;
+
+        document.getElementById('categoryText').textContent = category;
+        document.getElementById('customerText').textContent = customer;
+        document.getElementById('unitText').textContent = unit;
+        document.getElementById('timeText').textContent = formatTime(startTime) + ' - ' + formatTime(endTime);
+        document.getElementById('durationText').textContent = durationMinutes + ' minutes';
+        document.getElementById('priceText').textContent = '₱' + price;
+        document.querySelector('.note').textContent = 'Rate: ' + (category === 'Deluxe' ? deluxeRate : regularRate) + ' peso per minute';
+
+        document.getElementById('confirmBtn').addEventListener('click', async function () {
+            const confirmButton = this;
+            confirmButton.disabled = true;
+            confirmButton.textContent = 'Saving...';
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer,
+                        contact: localStorage.getItem('customerContact') || '',
+                        category,
+                        unit,
+                        start: startTime,
+                        end: endTime
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Unable to save the booking.');
+
+                const booking = result.booking;
+                const query = new URLSearchParams({
+                    customer: booking.customer,
+                    contact: booking.contact,
+                    category: booking.category,
+                    unit: booking.unit,
+                    startTime: booking.start,
+                    endTime: booking.end,
+                    durationMinutes: booking.durationMinutes,
+                    price: booking.price,
+                    bookingDate: booking.bookingDate
+                }).toString();
+                window.location.href = 'receipt.html?' + query;
+            } catch (error) {
+                alert(error.message);
+                confirmButton.disabled = false;
+                confirmButton.textContent = 'Book';
+            }
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function () {
+            window.location.href = 'booking.html';
+        });
+
+        function formatTime(timeValue) {
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12;
+            return hour12 + ':' + String(minutes).padStart(2, '0') + ' ' + suffix;
+        }
+    </script>
+</body>
+</html>

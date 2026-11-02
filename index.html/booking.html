@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Now</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.82)), url("https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1800&q=85");
+            background-size: cover, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            animation: backgroundShift 12s ease-in-out infinite alternate;
+        }
+
+        .booking-box {
+            background: rgba(255, 255, 255, 0.96);
+            padding: 35px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+            width: 420px;
+            text-align: left;
+            animation: panelEnter 0.7s ease-out both;
+        }
+
+        h1 {
+            color: #1e293b;
+            margin-top: 0;
+            text-align: center;
+            animation: titleEnter 0.6s 0.2s ease-out both;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 22px 0;
+        }
+
+        .category-item {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 12px 16px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .category-item:hover {
+            transform: translateX(4px);
+            border-color: #60a5fa;
+            box-shadow: 0 5px 14px rgba(37, 99, 235, 0.12);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-item input {
+            accent-color: #2563eb;
+            width: 18px;
+            height: 18px;
+        }
+
+        .category-item label {
+            color: #334155;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-top: 12px;
+            margin-left: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+            transform: translateY(-1px);
+        }
+
+        .category-panel {
+            display: none;
+        }
+
+        .category-panel.active {
+            display: block;
+        }
+
+        .status-message {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 14px;
+            font-weight: bold;
+            animation: statusEnter 0.35s ease-out;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .room-image {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .room-image img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .room-image img.fade {
+            opacity: 0;
+            transform: scale(0.96);
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn.clicked {
+            animation: buttonClick 0.35s ease;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary:hover {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 16px rgba(15, 23, 42, 0.12);
+        }
+
+        .primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+        }
+
+        @keyframes backgroundShift {
+            from { background-position: 0% 50%; }
+            to { background-position: 100% 50%; }
+        }
+
+        @keyframes panelEnter {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes titleEnter {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes statusEnter {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.94); }
+            100% { transform: scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body,
+            .booking-box,
+            h1,
+            .status-message,
+            .btn {
+                animation: none;
+            }
+        }
+
+        @media (orientation: landscape) and (min-width: 700px) {
+            body {
+                align-items: flex-start;
+                overflow-y: auto;
+            }
+
+            .booking-box {
+                width: min(1000px, 92vw);
+                margin: 24px auto;
+            }
+
+            .category-list {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .actions {
+                max-width: 520px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-box">
+        <h1>Book Now</h1>
+        <div class="status-message">Customer: <span id="customerName">Guest</span></div>
+
+        <div class="category-list">
+            <div class="category-item">
+                <div class="category-header">
+                    <input type="radio" id="regular" name="category" value="Regular" checked>
+                    <label for="regular">Regular</label>
+                </div>
+            </div>
+
+            <div class="category-item">
+                <div class="category-header">
+                    <input type="radio" id="deluxe" name="category" value="Deluxe">
+                    <label for="deluxe">Deluxe</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="regularPanel" class="category-panel active">
+            <div class="form-group">
+                <label for="unitSelect">Select Unit</label>
+                <select id="unitSelect">
+                    <option value="Unit 101">Unit 101</option>
+                    <option value="Unit 102">Unit 102</option>
+                    <option value="Unit 103">Unit 103</option>
+                    <option value="Unit 104">Unit 104</option>
+                </select>
+            </div>
+            <div class="room-image" id="regularRoomImage"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80" alt="Regular room"></div>
+        </div>
+
+        <div id="deluxePanel" class="category-panel">
+            <div class="form-group">
+                <label for="deluxeUnitSelect">Select Deluxe Unit</label>
+                <select id="deluxeUnitSelect">
+                    <option value="Deluxe Unit 201">Deluxe Unit 201</option>
+                    <option value="Deluxe Unit 202">Deluxe Unit 202</option>
+                </select>
+            </div>
+            <div class="room-image" id="deluxeRoomImage"><img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80" alt="Deluxe room"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="startTime">Start Time</label>
+            <input type="time" id="startTime" value="10:00">
+        </div>
+
+        <div class="form-group">
+            <label for="endTime">End Time</label>
+            <input type="time" id="endTime" value="12:00">
+        </div>
+
+        <div id="statusMessage" class="status-message">Checking availability...</div>
+
+        <div class="actions">
+            <button class="btn primary" type="button" id="bookBtn">Book</button>
+            <button class="btn secondary" type="button" id="backBtn">Back</button>
+        </div>
+    </div>
+
+    <script>
+        let bookedSlots = {};
+        let availabilityLoaded = false;
+        let availabilityError = '';
+        const customerName = localStorage.getItem('currentUsername') || 'Guest';
+
+        const unitSelect = document.getElementById('unitSelect');
+        const deluxeUnitSelect = document.getElementById('deluxeUnitSelect');
+        const startTimeInput = document.getElementById('startTime');
+        const endTimeInput = document.getElementById('endTime');
+        const bookBtn = document.getElementById('bookBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const regularPanel = document.getElementById('regularPanel');
+        const deluxePanel = document.getElementById('deluxePanel');
+
+        const regularRoomImages = {
+            'Unit 101': 'unit1 (1).png',
+            'Unit 102': 'unit2.png',
+            'Unit 103': 'unit3 (4).png',
+            'Unit 104': 'unit4(3).png'
+        };
+
+        const deluxeRoomImages = {
+            'Deluxe Unit 201': 'd2.png',
+            'Deluxe Unit 202': 'D11.png'
+        };
+
+        document.getElementById('customerName').textContent = customerName;
+
+        function convertToMinutes(timeValue) {
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function formatTime(timeValue) {
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12;
+            return hour12 + ':' + String(minutes).padStart(2, '0') + ' ' + suffix;
+        }
+
+        function overlaps(startA, endA, startB, endB) {
+            return startA < endB && endA > startB;
+        }
+
+        function getAvailability(unitName, start, end) {
+            if (!availabilityLoaded) {
+                return { available: false, message: availabilityError || 'Checking availability...' };
+            }
+            if (!start || !end) {
+                return { available: false, message: 'Please select a time range.' };
+            }
+
+            const startMinutes = convertToMinutes(start);
+            const endMinutes = convertToMinutes(end);
+
+            if (endMinutes <= startMinutes) {
+                return { available: false, message: 'End time must be later than the start time.' };
+            }
+
+            const slots = bookedSlots[unitName] || [];
+            const conflict = slots.find(slot => overlaps(
+                startMinutes,
+                endMinutes,
+                convertToMinutes(slot.start),
+                convertToMinutes(slot.end)
+            ));
+
+            if (conflict) {
+                return {
+                    available: false,
+                    conflict,
+                    message: 'Not available: ' + unitName + ' is already booked from ' + formatTime(conflict.start) + ' to ' + formatTime(conflict.end) + '.'
+                };
+            }
+
+            return { available: true, message: 'Available for this time.' };
+        }
+
+        function updateAvailability() {
+            const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+            const selectedUnit = selectedCategory === 'Regular' ? unitSelect.value : deluxeUnitSelect.value;
+            const startTime = startTimeInput.value;
+            const endTime = endTimeInput.value;
+            const selectedStatus = getAvailability(selectedUnit, startTime, endTime);
+
+            const optionsToUpdate = selectedCategory === 'Regular' ? unitSelect.options : deluxeUnitSelect.options;
+            Array.from(optionsToUpdate).forEach(option => {
+                const optionValue = option.value;
+                const optionStatus = getAvailability(optionValue, startTime, endTime);
+                option.disabled = availabilityLoaded && !optionStatus.available;
+            });
+
+            if (!selectedStatus.available) {
+                statusMessage.textContent = selectedStatus.message;
+                statusMessage.style.background = '#fef2f2';
+                statusMessage.style.color = '#b91c1c';
+                bookBtn.disabled = true;
+            } else {
+                statusMessage.textContent = 'Available: ' + selectedUnit + ' is open for this time.';
+                statusMessage.style.background = '#ecfdf5';
+                statusMessage.style.color = '#166534';
+                bookBtn.disabled = false;
+            }
+        }
+
+        async function loadAvailability() {
+            try {
+                const response = await fetch('/api/availability');
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Unable to load availability.');
+                bookedSlots = result.bookings;
+                availabilityLoaded = true;
+                availabilityError = '';
+            } catch (error) {
+                availabilityError = 'Could not connect to the booking server. Please try again later.';
+                console.error('Availability request failed:', error);
+            }
+            updateAvailability();
+        }
+
+        function toggleCategoryPanels() {
+            const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+            regularPanel.classList.toggle('active', selectedCategory === 'Regular');
+            deluxePanel.classList.toggle('active', selectedCategory === 'Deluxe');
+            unitSelect.disabled = selectedCategory !== 'Regular';
+            deluxeUnitSelect.disabled = selectedCategory !== 'Deluxe';
+        }
+
+        function updateRoomImage() {
+            const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+            const selectedUnit = selectedCategory === 'Regular' ? unitSelect.value : deluxeUnitSelect.value;
+            const roomImages = selectedCategory === 'Regular' ? regularRoomImages : deluxeRoomImages;
+            const roomContainer = selectedCategory === 'Regular' ? document.getElementById('regularRoomImage') : document.getElementById('deluxeRoomImage');
+            const imageElement = roomContainer.querySelector('img');
+            const imageSource = roomImages[selectedUnit] || Object.values(roomImages)[0];
+
+            imageElement.src = imageSource;
+            imageElement.alt = selectedUnit + ' room';
+        }
+
+        unitSelect.addEventListener('change', function () {
+            updateAvailability();
+            updateRoomImage();
+        });
+
+        deluxeUnitSelect.addEventListener('change', function () {
+            updateAvailability();
+            updateRoomImage();
+        });
+
+        startTimeInput.addEventListener('input', updateAvailability);
+        endTimeInput.addEventListener('input', updateAvailability);
+
+        document.querySelectorAll('input[name="category"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                toggleCategoryPanels();
+                updateAvailability();
+                updateRoomImage();
+            });
+        });
+
+        toggleCategoryPanels();
+        updateAvailability();
+        updateRoomImage();
+        loadAvailability();
+
+        document.getElementById('bookBtn').addEventListener('click', function () {
+            bookBtn.classList.remove('clicked');
+            void bookBtn.offsetWidth;
+            bookBtn.classList.add('clicked');
+            const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+            const selectedUnit = selectedCategory === 'Regular' ? document.getElementById('unitSelect').value : document.getElementById('deluxeUnitSelect').value;
+            const startTime = startTimeInput.value;
+            const endTime = endTimeInput.value;
+
+            if (!startTime || !endTime) {
+                alert('Please select both start and end times.');
+                return;
+            }
+
+            const startMinutes = convertToMinutes(startTime);
+            const endMinutes = convertToMinutes(endTime);
+
+            if (endMinutes <= startMinutes) {
+                alert('End time must be later than the start time.');
+                return;
+            }
+
+            const currentStatus = getAvailability(selectedUnit, startTime, endTime);
+            if (!currentStatus.available) {
+                alert(currentStatus.message);
+                return;
+            }
+
+            const durationMinutes = endMinutes - startMinutes;
+            const totalPrice = selectedCategory === 'Deluxe' ? durationMinutes * 5 : durationMinutes * 1;
+
+            const query = new URLSearchParams({
+                customer: customerName,
+                category: selectedCategory,
+                unit: selectedUnit,
+                startTime: startTime,
+                endTime: endTime,
+                durationMinutes: durationMinutes,
+                price: totalPrice
+            }).toString();
+
+            window.location.href = 'unit-details.html?' + query;
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function () {
+            this.classList.remove('clicked');
+            void this.offsetWidth;
+            this.classList.add('clicked');
+            window.location.href = 'signup.html';
+        });
+    </script>
+</body>
+</html>

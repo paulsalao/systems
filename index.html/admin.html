@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body { margin:0; font-family:Arial,sans-serif; background:#07111f url("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1800&q=85") center/cover fixed; min-height:100vh; display:flex; justify-content:center; align-items:center; }
+        .panel { background:rgba(255,255,255,.97); padding:30px; border-radius:16px; width:min(90%,760px); box-shadow:0 24px 60px rgba(15,23,42,.3); }
+        h1 { margin:0 0 20px; text-align:center; color:#1e293b; }
+        .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+        .toolbar button { padding:10px 18px; border:none; border-radius:8px; background:#ef4444; color:white; cursor:pointer; font-weight:bold; }
+        .toolbar button:hover { background:#dc2626; }
+        .toolbar button.secondary { background:#2563eb; }
+        .toolbar button.secondary:hover { background:#1d4ed8; }
+        .unit-select-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; place-items:center; z-index:1000; }
+        .unit-select-box { background:white; padding:24px; border-radius:12px; text-align:center; max-width:360px; width:90%; }
+        .unit-select-box h2 { margin-top:0; color:#1e293b; }
+        .unit-select-box select { width:100%; padding:10px; margin:12px 0; border:1px solid #cbd5e1; border-radius:6px; font-size:16px; }
+        .unit-select-box button { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-size:14px; margin:4px; }
+        .unit-select-box .primary { background:#2563eb; color:white; }
+        .unit-select-box .secondary { background:#e2e8f0; color:#0f172a; }
+        .time-range { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+        .time-range input[type=time] { padding:6px; border:1px solid #cbd5e1; border-radius:6px; }
+        .check-btn { padding:6px 14px; background:#2563eb; color:white; border:none; border-radius:6px; cursor:pointer; }
+        .admin-unit { border:1px solid #cbd5e1; border-radius:10px; padding:16px; margin-bottom:14px; background:#f8fafc; }
+        .admin-unit h3 { margin:0 0 8px; color:#2563eb; }
+        .status { display:inline-block; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold; margin-bottom:10px; }
+        .status.available { background:#ecfdf5; color:#166534; }
+        .status.booked { background:#fef2f2; color:#b91c1c; }
+        .reset-unit-btn { padding:4px 10px; background:#f59e0b; color:white; border:none; border-radius:5px; cursor:pointer; font-size:12px; margin-bottom:10px; }
+        .booking-list { list-style:none; padding:0; margin:0 0 10px; }
+        .booking-item { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:white; border-radius:6px; margin-bottom:5px; border:1px solid #e2e8f0; }
+        .empty { color:#64748b; font-style:italic; margin:0 0 10px; }
+        .add-booking { display:flex; gap:8px; flex-wrap:wrap; }
+        .add-booking input[type=time] { padding:6px; border:1px solid #cbd5e1; border-radius:6px; width:120px; }
+        .add-btn { padding:6px 12px; background:#2563eb; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px; }
+        .nav-links { text-align:center; margin-top:20px; }
+        .nav-links a { display:inline-block; padding:10px 20px; background:#2563eb; color:white; border-radius:8px; text-decoration:none; font-weight:bold; margin:0 6px; }
+        .nav-links a.secondary { background:#e2e8f0; color:#0f172a; }
+        .password-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; place-items:center; z-index:1000; }
+        .password-box { background:white; padding:30px; border-radius:12px; text-align:center; max-width:400px; width:90%; }
+        .password-box h2 { margin-top:0; color:#1e293b; }
+        .password-box input { width:100%; padding:10px; margin:12px 0; border:1px solid #cbd5e1; border-radius:6px; font-size:16px; }
+        .password-box button { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-size:14px; margin:4px; }
+        .password-box .primary { background:#2563eb; color:white; }
+        .password-box .secondary { background:#e2e8f0; color:#0f172a; }
+        .password-error { color:#b91c1c; font-size:14px; margin-top:8px; min-height:18px; }
+        .records-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; place-items:center; z-index:1000; }
+        .records-box { background:white; padding:24px; border-radius:12px; max-width:700px; width:90%; max-height:80vh; overflow:auto; }
+        .records-box h2 { margin-top:0; color:#1e293b; text-align:center; }
+        .records-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:14px; }
+        .records-table th, .records-table td { padding:8px 10px; border:1px solid #e2e8f0; text-align:left; }
+        .records-table th { background:#f1f5f9; color:#1e293b; font-weight:bold; position:sticky; top:0; }
+        .records-table tr:nth-child(even) { background:#f8fafc; }
+        .records-box button { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-size:14px; margin:12px 4px 0; }
+        .records-box .secondary { background:#e2e8f0; color:#0f172a; }
+        .records-box .secondary:hover { background:#cbd5e1; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Admin Control Panel</h1>
+        <div class="toolbar">
+            <span>Manage today's unit bookings.</span>
+            <button id="resetAllBtn">Reset Unit</button>
+            <button id="recordsBtn" class="secondary">Records</button>
+            <button id="adminLogoutBtn" class="secondary">Log Out</button>
+        </div>
+        <div id="adminContainer"><p>Loading...</p></div>
+        <div class="nav-links">
+            <a href="booking.html" class="secondary">View Booking</a>
+            <a href="index.html">Home</a>
+        </div>
+    </div>
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <h2>Admin Password Required</h2>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <div class="password-error" id="passwordError"></div>
+            <div>
+                <button class="primary" id="passwordConfirm">Confirm</button>
+                <button class="secondary" id="passwordCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="unit-select-overlay" id="unitSelectOverlay">
+        <div class="unit-select-box">
+            <h2>Select Unit to Reset</h2>
+            <select id="unitSelectReset"></select>
+            <div class="password-error" id="unitSelectError"></div>
+            <div>
+                <button class="primary" id="unitSelectConfirm">Reset</button>
+                <button class="secondary" id="unitSelectCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="records-overlay" id="recordsOverlay">
+        <div class="records-box">
+            <h2>Customer Booking Records</h2>
+            <table class="records-table" id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Unit</th>
+                        <th>Customer</th>
+                        <th>Category</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div style="text-align:center;">
+                <button class="secondary" id="recordsPrint">Print</button>
+                <button class="secondary" id="recordsClose">Close</button>
+            </div>
+        </div>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>

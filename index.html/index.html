@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHISPERING PINES LODGE</title>
+  <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.82)), url("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1800&q=85");
+            background-size: cover, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            animation: backgroundShift 12s ease-in-out infinite alternate;
+        }
+
+        .panel {
+            background: transparent;
+            padding: 20px;
+            text-align: center;
+            animation: panelEnter 0.7s ease-out both;
+        }
+
+        h1 {
+            color: #f8fafc;
+            animation: titleEnter 0.6s 0.2s ease-out both;
+        }
+
+        p {
+            color: #e0f2fe;
+            font-size: 18px;
+            animation: titleEnter 0.6s 0.3s ease-out both;
+        }
+
+        .book-btn {
+            margin-top: 20px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .book-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+        }
+
+        .book-btn.clicked {
+            animation: buttonClick 0.35s ease;
+        }
+
+        .back-btn {
+            margin-top: 12px;
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .back-btn:hover {
+            background: #cbd5e1;
+        }
+
+        @keyframes backgroundShift {
+            from {
+                background-position: 0% 50%;
+            }
+            to {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes panelEnter {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes titleEnter {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes buttonClick {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.94);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body,
+            .panel,
+            h1,
+            p,
+            .book-btn {
+                animation: none;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <p>Welcome to</p>
+        <h1>WHISPERING PINES LODGE</h1>
+        <p>Unplug from the world, Reconnect with yourself.</p>
+        <button class="book-btn" type="button" id="bookNowBtn">Reserve Unit</button>
+    </div>
+
+    <script>
+        document.querySelectorAll('.book-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                button.classList.remove('clicked');
+                void button.offsetWidth;
+                button.classList.add('clicked');
+            });
+        });
+
+        document.getElementById('bookNowBtn').addEventListener('click', function () {
+            window.location.href = 'signup.html';
+        });
+    </script>
+</body>
+
+</html>

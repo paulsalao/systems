@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THANK YOU FOR BOOKING</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.82)), url("https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1800&q=85");
+            background-size: cover, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .receipt-box {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 12px;
+            width: 440px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            margin-top: 0;
+        }
+
+        .receipt-header {
+            text-align: center;
+            color: #475569;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 12px 0;
+            color: #334155;
+            font-size: 16px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .total {
+            margin-top: 18px;
+            padding-top: 12px;
+            border-top: 1px solid #cbd5e1;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .print {
+            background: #2563eb;
+            color: white;
+        }
+
+        .home {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .note {
+            margin-top: 12px;
+            color: #475569;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .payment-section {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .payment-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        .payment-select {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 11px;
+            color: #0f172a;
+            background: white;
+            font-size: 16px;
+        }
+
+        .gcash-payment {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .gcash-payment img {
+            display: block;
+            width: 190px;
+            height: 190px;
+            object-fit: contain;
+            margin: 10px auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .generate-qr-btn {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 11px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .generate-qr-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .qr-loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .qr-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: qrSpin 0.8s linear infinite;
+            margin: 0 auto 8px;
+        }
+
+        .qr-loading-text {
+            color: #1d4ed8;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @keyframes qrSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .qr-fallback {
+            display: none;
+            color: #b91c1c;
+            font-size: 13px;
+        }
+
+        .cash-payment {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .cash-payment input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 11px;
+            font-size: 16px;
+        }
+
+        .change-message {
+            margin-top: 10px;
+            color: #166534;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .print:hover {
+            background: #1d4ed8;
+        }
+
+        .home:hover {
+            background: #cbd5e1;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .actions {
+                display: none;
+            }
+
+            .payment-section {
+                display: none;
+            }
+
+            #paymentInfoRow,
+            #changeRow {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-box">
+        <h1>THANK YOU FOR BOOKING</h1>
+        <div class="receipt-header">Unplug from the world, Reconnect with yourself.</div>
+        <div class="row"><span class="label">Customer Name</span><span id="customerNameText">Guest</span></div>
+        <div class="row"><span class="label">Contact</span><span id="customerContactText">-</span></div>
+        <div class="row"><span class="label">Booking Date</span><span id="bookingDateText">Today</span></div>
+        <div class="row"><span class="label">Category</span><span id="categoryText">Regular</span></div>
+        <div class="row"><span class="label">Customer</span><span id="customerText">Guest</span></div>
+        <div class="row"><span class="label">Unit</span><span id="unitText">Unit 101</span></div>
+        <div class="row"><span class="label">Time</span><span id="timeText">10:00 AM - 12:00 PM</span></div>
+        <div class="row"><span class="label">Duration</span><span id="durationText">120 minutes</span></div>
+        <div class="row total"><span class="label">Total</span><span id="totalText">₱120</span></div>
+        <div class="row"><span class="label">Payment Method</span><span id="paymentMethodText">GCash</span></div>
+        <div class="row" id="paymentInfoRow" style="display:none"><span class="label">Amount Paid</span><span id="amountPaidText">₱120</span></div>
+        <div class="row" id="changeRow" style="display:none"><span class="label">Change</span><span id="changeText">₱0.00</span></div>
+
+        <div class="payment-section">
+            <label class="payment-label" for="paymentMethod">Payment Method</label>
+            <select class="payment-select" id="paymentMethod">
+                <option value="gcash">GCash</option>
+                <option value="cash">Cash</option>
+            </select>
+
+            <div class="gcash-payment" id="gcashPayment">
+                <div class="label">Scan to pay with GCash</div>
+                <button type="button" class="generate-qr-btn" id="generateQrBtn">Generate QR Code</button>
+                <div class="qr-loading" id="qrLoading">
+                    <div class="qr-loading-spinner"></div>
+                    <div class="qr-loading-text">Generating QR Code...</div>
+                </div>
+                <img src="811830050_1836249400702223_1995352461962767229_n.jpg" alt="GCash payment QR code" id="gcashQr" style="display:none">
+                <div class="qr-fallback" id="qrFallback" style="display:none">Add the GCash QR image to this folder to display it.</div>
+            </div>
+
+            <div class="cash-payment" id="cashPayment">
+                <label class="payment-label" for="cashAmount">Customer Cash</label>
+                <input type="number" id="cashAmount" min="0" step="0.01" placeholder="Enter amount received">
+                <div class="change-message" id="changeMessage">Enter the customer payment amount.</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn print" type="button" onclick="window.print()">Print</button>
+            <button class="btn home" type="button" onclick="window.location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const customer = params.get('customer') || localStorage.getItem('currentUsername') || 'Guest';
+        const category = params.get('category') || 'Regular';
+        const unit = params.get('unit') || 'Unit 101';
+        const startTime = params.get('startTime') || '10:00';
+        const endTime = params.get('endTime') || '12:00';
+        const durationMinutes = Number(params.get('durationMinutes')) || 120;
+        const total = Number(params.get('price')) || 120;
+        const contact = params.get('contact') || localStorage.getItem('customerContact') || '-';
+        const bookingDate = params.get('bookingDate');
+
+        const originalTime = formatTime(startTime) + ' - ' + formatTime(endTime);
+        const originalDuration = durationMinutes + ' minutes';
+        const originalTotal = '₱' + total;
+
+        document.getElementById('categoryText').textContent = category;
+        document.getElementById('customerText').textContent = customer;
+        document.getElementById('unitText').textContent = unit;
+        document.getElementById('timeText').textContent = originalTime;
+        document.getElementById('durationText').textContent = originalDuration;
+        document.getElementById('totalText').textContent = originalTotal;
+
+        // Customer info from signup
+        const customerName = localStorage.getItem('currentUsername') || customer || 'Guest';
+        const customerContact = contact;
+        const displayBookingDate = bookingDate
+            ? new Date(bookingDate + 'T00:00:00').toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })
+            : new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        document.getElementById('customerNameText').textContent = customerName;
+        document.getElementById('customerContactText').textContent = customerContact;
+        document.getElementById('bookingDateText').textContent = displayBookingDate;
+
+        // Hide duplicate Customer row if name is present
+        const customerRow = document.getElementById('customerText').closest('.row');
+        if (customerName && customerName !== 'Guest') {
+            customerRow.style.display = 'none';
+        }
+
+        const paymentMethod = document.getElementById('paymentMethod');
+        const gcashPayment = document.getElementById('gcashPayment');
+        const cashPayment = document.getElementById('cashPayment');
+        const cashAmount = document.getElementById('cashAmount');
+        const changeMessage = document.getElementById('changeMessage');
+        const gcashQr = document.getElementById('gcashQr');
+        const qrFallback = document.getElementById('qrFallback');
+        const generateQrBtn = document.getElementById('generateQrBtn');
+        const qrLoading = document.getElementById('qrLoading');
+        const paymentMethodText = document.getElementById('paymentMethodText');
+        const amountPaidText = document.getElementById('amountPaidText');
+        const changeText = document.getElementById('changeText');
+        const paymentInfoRow = document.getElementById('paymentInfoRow');
+        const changeRow = document.getElementById('changeRow');
+
+        paymentMethod.addEventListener('change', function () {
+            const isCash = this.value === 'cash';
+            gcashPayment.style.display = isCash ? 'none' : 'block';
+            cashPayment.style.display = isCash ? 'block' : 'none';
+            paymentMethodText.textContent = isCash ? 'Cash' : 'GCash';
+            if (!isCash) {
+                cashAmount.value = '';
+                changeMessage.textContent = 'Enter the customer payment amount.';
+                changeMessage.style.color = '#166534';
+                amountPaidText.textContent = originalTotal;
+                changeText.textContent = '₱0.00';
+                paymentInfoRow.style.display = 'flex';
+                changeRow.style.display = 'none';
+            } else {
+                paymentInfoRow.style.display = 'none';
+                changeRow.style.display = 'none';
+            }
+        });
+
+        cashAmount.addEventListener('input', function () {
+            const amountReceived = Number(this.value);
+
+            if (!this.value || amountReceived < total) {
+                changeMessage.textContent = 'Payment must be at least ₱' + total + '.';
+                changeMessage.style.color = '#b91c1c';
+                paymentInfoRow.style.display = 'none';
+                changeRow.style.display = 'none';
+                return;
+            }
+
+            const change = amountReceived - total;
+            changeMessage.textContent = 'Change: ₱' + change.toFixed(2);
+            changeMessage.style.color = '#166534';
+            amountPaidText.textContent = '₱' + amountReceived.toFixed(2);
+            changeText.textContent = '₱' + change.toFixed(2);
+            paymentInfoRow.style.display = 'flex';
+            changeRow.style.display = 'flex';
+        });
+
+        gcashQr.addEventListener('error', function () {
+            gcashQr.style.display = 'none';
+            qrFallback.style.display = 'block';
+        });
+
+        generateQrBtn.addEventListener('click', function () {
+            qrLoading.style.display = 'block';
+            gcashQr.style.display = 'none';
+            qrFallback.style.display = 'none';
+            setTimeout(function () {
+                qrLoading.style.display = 'none';
+                gcashQr.style.display = 'block';
+            }, 1500);
+        });
+
+        function formatTime(timeValue) {
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            const suffix = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12;
+            return hour12 + ':' + String(minutes).padStart(2, '0') + ' ' + suffix;
+        }
+    </script>
+</body>
+</html>

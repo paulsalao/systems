@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserve Unit</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(7, 17, 31, 0.72), rgba(7, 17, 31, 0.82)), url("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1800&q=85");
+            background-size: cover, cover;
+            background-position: center, center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            animation: backgroundShift 12s ease-in-out infinite alternate;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.96);
+            padding: 34px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+            width: 340px;
+            animation: panelEnter 0.7s ease-out both;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+            color: #1e293b;
+            animation: titleEnter 0.6s 0.2s ease-out both;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+            transform: translateY(-1px);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28);
+        }
+
+        button.clicked {
+            animation: buttonClick 0.35s ease;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        .link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .link a:hover {
+            color: #1e40af;
+        }
+
+        @keyframes backgroundShift {
+            from { background-position: 0% 50%; }
+            to { background-position: 100% 50%; }
+        }
+
+        @keyframes panelEnter {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes titleEnter {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.94); }
+            100% { transform: scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body,
+            .box,
+            h1,
+            button {
+                animation: none;
+            }
+        }
+
+        .admin-trigger {
+            position: fixed;
+            right: 10px;
+            bottom: 10px;
+            width: 54px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            font-size: 11px;
+            line-height: 1.2;
+            background: rgba(15, 23, 42, 0.15);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .admin-trigger:hover .admin-btn,
+        .admin-trigger:focus-within .admin-btn,
+        .admin-btn:hover,
+        .admin-btn:focus,
+        .admin-btn:focus-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.25);
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="admin-trigger" aria-label="Admin access">
+        <button class="admin-btn" type="button" id="adminBtn" onclick="window.location.href='admin.html'">Admin</button>
+    </div>
+    <div class="box">
+        <h1>Reserve Unit</h1>
+
+        <form id="signupForm">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" name="signupName" placeholder="Enter your full name" required>
+
+            <label for="signupContact">Contact Number</label>
+            <input type="text" id="signupContact" name="signupContact" placeholder="Enter your contact number" required>
+
+            <button type="submit">Reserve Unit</button>
+        </form>
+
+    </div>
+
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const signupButton = signupForm.querySelector('button[type="submit"]');
+
+        signupForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            signupButton.classList.remove('clicked');
+            void signupButton.offsetWidth;
+            signupButton.classList.add('clicked');
+
+            const name = document.getElementById('signupName').value.trim();
+            const contact = document.getElementById('signupContact').value.trim();
+
+            if (name && contact) {
+                localStorage.setItem('currentUsername', name);
+                localStorage.setItem('customerContact', contact);
+                alert('Thank you, ' + name + '! Proceeding to booking.');
+                window.location.href = 'booking.html';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+    </script>
+</body>
+</html>
